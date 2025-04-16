@@ -1,0 +1,66 @@
+/*Estilização do icone da página*/
+.icon{
+    width: 100%;
+}
+
+div img.logo{
+    width: 130px;
+    padding: 0px 20px;
+}
+
+/*Estilização da página inteira*/
+body{
+    font-family: sans-serif;
+    background-color: #206E8C;
+}
+
+/*Estilização do botão do cabeçalho*/
+body div ul li button.button{
+    background-color: #F2E7DC;
+    color: #206E8C;
+}
+
+body div.title{
+    background-color:#F2E7DC;
+    color: #206E8C;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+}
+
+/*Estilização do cabeçalho*/
+.header{
+    background-color:#206E8C;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.campo-tarefa{
+    padding: 5px 20px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.button{
+    padding: 5px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/*Estilização do corpo*/
+body div.body{
+    background-color:#F2E7DC;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/*Estilização das listas*/
+body div ul{
+    list-style-type: none;
+}
