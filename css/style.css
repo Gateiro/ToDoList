@@ -14,12 +14,6 @@ body{
     background-color: #206E8C;
 }
 
-/*Estilização do botão do cabeçalho*/
-body div ul li button.button{
-    background-color: #F2E7DC;
-    color: #206E8C;
-}
-
 body div.title{
     background-color:#F2E7DC;
     color: #206E8C;
@@ -51,6 +45,16 @@ body div.title{
     padding: 5px;
     border-radius: 10px;
     font-weight: bold;
+    transition-duration:0.4s;
+    background-color: #206E8C;
+    color: #F2E7DC;
+    
+    
+}
+
+.button:hover{
+    background-color:#F2E7DC;
+    color: #206E8C;
 }
 
 /*Estilização do corpo*/
@@ -58,9 +62,16 @@ body div.body{
     background-color:#F2E7DC;
     padding: 20px;
     border-radius: 10px;
+    margin-top: 15px;
+    list-style-type: none;
 }
 
 /*Estilização das listas*/
 body div ul{
     list-style-type: none;
+    display: flex;
+    flex-direction: row;
 }
+
+
+
