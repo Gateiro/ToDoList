@@ -1,77 +1,88 @@
-/*Estilização do icone da página*/
-.icon{
-    width: 100%;
+/* Estilo geral do corpo */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
 }
-
-div img.logo{
-    width: 130px;
-    padding: 0px 20px;
+/* Título */
+.titulo {
+  text-align: center;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
 }
-
-/*Estilização da página inteira*/
-body{
-    font-family: sans-serif;
-    background-color: #206E8C;
+ 
+/* Campo de tarefa */
+.campo-tarefa {
+  width: 60%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
-
-body div.title{
-    background-color:#F2E7DC;
-    color: #206E8C;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    
+ 
+/* Botão de adicionar */
+.botao-adicionar {
+  background-color: #009297;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
-
-/*Estilização do cabeçalho*/
-.header{
-    background-color:#206E8C;
-    color: white;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    border-radius: 0px 0px 10px 10px;
+ 
+.botao-adicionar:hover {
+  background-color: #01595c;
 }
-
-.campo-tarefa{
-    padding: 5px 20px;
-    border-radius: 10px;
-    width: 300px;
+ 
+/* Lista de tarefas */
+.lista-tarefas {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
 }
-
-.button{
-    padding: 5px;
-    border-radius: 10px;
-    font-weight: bold;
-    transition-duration:0.4s;
-    background-color: #206E8C;
-    color: #F2E7DC;
-    
-    
+ 
+/* Item da lista */
+.item-tarefa {
+  background-color: #d4d4d4;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.button:hover{
-    background-color:#F2E7DC;
-    color: #206E8C;
+ 
+/* Botão de remover */
+.botao-remover {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
-
-/*Estilização do corpo*/
-body div.body{
-    background-color:#F2E7DC;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 15px;
-    list-style-type: none;
+ 
+.botao-remover:hover {
+  background-color: #a71d2a;
 }
-
-/*Estilização das listas*/
-body div ul{
-    list-style-type: none;
-    display: flex;
-    flex-direction: row;
+ 
+/* Botão de editar */
+.botao-editar {
+  background-color: #0056b3;
+  color: #ebeef1;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+ 
 }
-
-
-
+ 
+.botao-editar:hover {
+  background-color: #081f38;
+}
+ 
+ 
+ 
+ 
