@@ -1,0 +1,35 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "description": "Projeto To Do List para adicionar e pesquisar tarefas existentes, adicionar novas, editá-las e excluí-las.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gateiro/ToDoList.git"
+  },
+  "keywords": [
+    "To",
+    "Do",
+    "List",
+    "CRUD",
+    "API",
+    "RESTful",
+    "Node",
+    "Web",
+    "Server"
+  ],
+  "author": "Matheus Rodrigues",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gateiro/ToDoList/issues"
+  },
+  "homepage": "https://github.com/Gateiro/ToDoList#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
