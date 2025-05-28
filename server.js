@@ -3,7 +3,7 @@ const express = require('express');
 
 //Importa o módulo cors para permitir requisições de difierentes origens
 const cors = require('cors');
-const { parse } = require('path');
+
 
 //Cria uma instância de aplicação Express
 const app = express();
@@ -31,7 +31,7 @@ app.get('/tarefas', (req, res) => {
 //Rota POST - Adiciona uma nova tarefa à lista
 app.post('/tarefas', (req, res) => {
   //Extrai o campo 'texto' enviado no corpo da requisição
-  const { id, nome, descricao } = req.body; //Desestrutura o corpo da requisição
+  const { texto } = req.body; //Desestrutura o corpo da requisição
 
   //Validação simples para verificar se o campo 'texto' foi enviado
   if(!texto){
