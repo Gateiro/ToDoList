@@ -39,6 +39,10 @@ async function renderizarTarefas() {
             botaoEditar.className = 'botao-editar';
             botaoEditar.textContent = 'Editar';
 
+            botaoEditar.addEventListener("click", () => {
+                editarTarefa(tarefa.id, tarefa.titulo);
+            })
+
             itemLista.appendChild(botaoRemover);
             itemLista.appendChild(botaoEditar);
             listaTarefas.appendChild(itemLista);
