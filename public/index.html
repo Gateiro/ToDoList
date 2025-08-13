@@ -8,9 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Link para o Font Awesome -->
 </head>
 <body>
-    <h1 class="titulo"> Minha Lista de Tarefas</h1>
-    <form>
-    <input class = "campo-tarefa" type = "textdd" placeholder="Título" required>
+    <h1 class="titulo">Lista de Tarefas</h1>
+    <div class="form-group">
+        <label for="campo-titulo">Título: </label>
+        <input id= "campo-titulo" class="campo-titulo" type="text" placeholder="Ex.: Minha tarefa" required>
+    </div>
+    <div class="form-group">
+        <label for="campo-descricao">Descrição: </label>
+        <input id= "campo-descricao" class="campo-descricao" type="text" placeholder="Ex.: Tarefa para desenvolver uma ToDoList" required>
+    </div>
     <input class = "campo-descricao" type = "textdd" placeholder="Descrição">
     <select class="campo-status" required>
         <option value="pendente">Pendente</option>
@@ -25,7 +31,6 @@
     <input class = campo-data-criacao type= "date">
     <input class = campo-data-entrega type= "date">
     <button class ="botao-adicionar" type="submit">Adicionar</button> <!-- Botão para adicionar a tarefa -->
-    </form>
  
     <ul class="lista-tarefas"> <!-- Lista de tarefas -->
         
