@@ -4,6 +4,7 @@ na página HTML para manipulá-la
 Aloca o valor que o usuário digitar no input da variável chamada
 inputTarefa*/
 const inputTarefa = document.querySelector(".campo-tarefa");
+const inputDescricao = document.querySelector("campo-descricao")
 
 /*Seleciona o botão de adicionar tarefa e aloca na variável
 botaoAdicionar, que será utilizado para adicionar uma nova tarefa*/
@@ -24,8 +25,7 @@ async function renderizarTarefas() {
             itemLista.className = 'item-tarefa';
             itemLista.textContent = tarefa.titulo;
 
-            /*Botão remover criado para cada item da lista, isto é, para cada tarefa da lista
-            OBSERVAÇÃO: AINDA NÃO ESTÁ FUNCIONAL*/
+            /*Botão remover criado para cada item da lista, isto é, para cada tarefa da lista*/
             const botaoRemover = document.createElement('button');
             botaoRemover.className = 'botao-remover';
             botaoRemover.textContent = 'Excluir';
@@ -56,6 +56,9 @@ async function renderizarTarefas() {
 
 /*Função para adicionar uma nova tarefa à lista de tarefas*/
 async function adicionarTarefa(titulo) {
+    //Limpa o elemento ul (listaTarefas)
+    listaTarefas.innerHTML = "";
+    
     try{
         await fetch(urlAPI,{
             method: "POST",
@@ -66,7 +69,10 @@ async function adicionarTarefa(titulo) {
                 /*Por enquanto, adicionaremos somente o título*/
                 titulo: titulo,
             })
-        })
+        });
+        /*A cada nova tarefa adicionada, executa renderizarTarefas() para que todas apareçam na
+        tela, inclusive a última adicionada*/
+        renderizarTarefas();
     }
     catch (erro){
         console.erro("Erro ao adicionar tarefa:", erro);
@@ -76,28 +82,41 @@ async function adicionarTarefa(titulo) {
 
 /*Função para editar tarefa*/
 async function editarTarefa(id, tituloAtual) {
-    const novoTitulo = prompt('Editar tarefa', tituloAtual)
+    const novoTitulo = prompt('Editar título:', tituloAtual);
 
-    //SE UM NOVO TITULO FOR DIGITADO E ELE FOR DIFERENTE DE VAZIO
-    if (novoTitulo && novoTitulo.trim() !==""){
-        try{
+    //Se um novo título for digitado e ele for diferente de vazio
+    if (novoTitulo && novoTitulo.trim() !== "") {
+        try {
             await fetch(`${urlAPI}/${id}`, {
                 method: "PUT",
-                headers:{
-                    "Content-Type":"application/json"
+                headers: {
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     titulo: novoTitulo
                 })
             });
+            listaTarefas.innerHTML = "";
             renderizarTarefas();
-        } catch (erro){
+        } catch (erro) {
             console.error("Erro ao editar tarefa", erro);
         }
     }
 }
 
-//FALTA FUNÇÃO REMOVER, CRIAR
+/*Função para remover a tarefa*/
+async function removerTarefa(id) {
+    listaTarefas.innerHTML = "";
+    try {
+        await fetch(`${urlAPI}/${id}`, {
+            method: "DELETE"
+        });
+        renderizarTarefas();
+    }
+    catch (erro) {
+        console.error("Erro ao deletar tarefa: ", erro);
+    }
+}
 
 botaoAdicionar.addEventListener("click", function (evento){
     /*Evita o comportamento padrão do botão, que é enviar um formulário*/

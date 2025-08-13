@@ -10,7 +10,20 @@
 <body>
     <h1 class="titulo"> Minha Lista de Tarefas</h1>
     <form>
-    <input class = "campo-tarefa" type = "textdd" placeholder="Digite uma tarefa"> <!-- Campo de texto para digitar a tarefa -->
+    <input class = "campo-tarefa" type = "textdd" placeholder="Título" required>
+    <input class = "campo-descricao" type = "textdd" placeholder="Descrição">
+    <select class="campo-status" required>
+        <option value="pendente">Pendente</option>
+        <option value="em-andamento">Em andamento</option>
+        <option value="concluida">Concluída</option>
+    </select>
+    <select class="campo-prioridade" required>
+        <option>Baixa</option>
+        <option>Média</option>
+        <option>Alta</option>
+    </select>
+    <input class = campo-data-criacao type= "date">
+    <input class = campo-data-entrega type= "date">
     <button class ="botao-adicionar" type="submit">Adicionar</button> <!-- Botão para adicionar a tarefa -->
     </form>
  
