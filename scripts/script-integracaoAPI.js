@@ -1,136 +1,230 @@
-const urlAPI = "http://localhost:3000";
-/*Seleciona cada elemento do DOM (Document Object Model) presente
-na página HTML para manipulá-la
-Aloca o valor que o usuário digitar no input da variável chamada
-inputTarefa*/
-const inputTarefa = document.querySelector(".campo-tarefa");
-const inputDescricao = document.querySelector("campo-descricao")
+// URL base da sua API
+const urlAPI = "http://localhost:3000/tarefas";
 
-/*Seleciona o botão de adicionar tarefa e aloca na variável
-botaoAdicionar, que será utilizado para adicionar uma nova tarefa*/
-const botaoAdicionar = document.querySelector(".botao-adicionar");
+// --- Seleção dos Elementos do DOM (Interface) ---
+// Formulário e seus campos
+const form = document.querySelector('.form-container'); // O container do formulário
+const inputTitulo = document.getElementById('campo-titulo');
+const inputDescricao = document.getElementById('campo-descricao');
+const selectStatus = document.getElementById('campo-status');
+const selectPrioridade = document.getElementById('campo-prioridade');
+const inputDataEntrega = document.getElementById('campo-data-entrega');
 
-/*Seleciona a lista de tarefas e aloca na variável listaTarefas
-que será utilizada para exibir as tarefas na tela*/
-const listaTarefas = document.querySelector(".lista-tarefas");
+// Botão de adicionar
+const botaoAdicionar = document.getElementById('botao-adicionar');
 
-/*Função para carregar as tarefas adicionadas na tela*/
-async function renderizarTarefas() {
+// A lista <ul> onde as tarefas serão exibidas
+const listaTarefas = document.getElementById('lista-tarefas');
+
+
+// --- Funções de Interação com a API e Renderização ---
+
+/**
+ * PARTE 2: GET - Busca todas as tarefas na API e manda renderizar na tela.
+ */
+async function carregarTarefas() {
+    listaTarefas.innerHTML = ''; // Limpa a lista antes de carregar novos itens para evitar duplicatas
+
     try {
-        const resposta = await fetch(urlAPI);
-        const tarefas = await resposta.json();
-
-        tarefas.forEach(tarefa => {
-            const itemLista = document.createElement('li');
-            itemLista.className = 'item-tarefa';
-            itemLista.textContent = tarefa.titulo;
-
-            /*Botão remover criado para cada item da lista, isto é, para cada tarefa da lista*/
-            const botaoRemover = document.createElement('button');
-            botaoRemover.className = 'botao-remover';
-            botaoRemover.textContent = 'Excluir';
-
-            botaoRemover.addEventListener("click", () =>
-                removerTarefa(tarefa.id)
-            );
-
-            /*Botão editar criado para editar cada item da lista -> AINDA NÃO FUNCIONAL*/
-            const botaoEditar = document.createElement('button');
-            botaoEditar.className = 'botao-editar';
-            botaoEditar.textContent = 'Editar';
-
-            botaoEditar.addEventListener("click", () => {
-                editarTarefa(tarefa.id, tarefa.titulo);
-            })
-
-            itemLista.appendChild(botaoRemover);
-            itemLista.appendChild(botaoEditar);
-            listaTarefas.appendChild(itemLista);
-        });
-    }
-
-    catch (erro) {
-        console.error("Erro ao renderizar tarefas: " + erro);
-    }
-}
-
-/*Função para adicionar uma nova tarefa à lista de tarefas*/
-async function adicionarTarefa(titulo) {
-    //Limpa o elemento ul (listaTarefas)
-    listaTarefas.innerHTML = "";
-    
-    try{
-        await fetch(urlAPI,{
-            method: "POST",
-            headers:{
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                /*Por enquanto, adicionaremos somente o título*/
-                titulo: titulo,
-            })
-        });
-        /*A cada nova tarefa adicionada, executa renderizarTarefas() para que todas apareçam na
-        tela, inclusive a última adicionada*/
-        renderizarTarefas();
-    }
-    catch (erro){
-        console.erro("Erro ao adicionar tarefa:", erro);
-    }
-    
-}
-
-/*Função para editar tarefa*/
-async function editarTarefa(id, tituloAtual) {
-    const novoTitulo = prompt('Editar título:', tituloAtual);
-
-    //Se um novo título for digitado e ele for diferente de vazio
-    if (novoTitulo && novoTitulo.trim() !== "") {
-        try {
-            await fetch(`${urlAPI}/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    titulo: novoTitulo
-                })
-            });
-            listaTarefas.innerHTML = "";
-            renderizarTarefas();
-        } catch (erro) {
-            console.error("Erro ao editar tarefa", erro);
+        const response = await fetch(urlAPI);
+        if (!response.ok) {
+            throw new Error('Não foi possível buscar as tarefas da API.');
         }
-    }
-}
+        const tarefas = await response.json();
 
-/*Função para remover a tarefa*/
-async function removerTarefa(id) {
-    listaTarefas.innerHTML = "";
-    try {
-        await fetch(`${urlAPI}/${id}`, {
-            method: "DELETE"
+        // Para cada tarefa retornada pela API, chama a função para criar o HTML dela
+        tarefas.forEach(tarefa => {
+            const elementoTarefa = renderizarTarefa(tarefa);
+            listaTarefas.appendChild(elementoTarefa);
         });
-        renderizarTarefas();
-    }
-    catch (erro) {
-        console.error("Erro ao deletar tarefa: ", erro);
+    } catch (error) {
+        console.error("Falha ao carregar tarefas:", error);
     }
 }
 
-botaoAdicionar.addEventListener("click", function (evento){
-    /*Evita o comportamento padrão do botão, que é enviar um formulário*/
-    evento.preventDefault();
-    const novaTarefa = inputTarefa.value.trim();
+/**
+ * Função auxiliar que cria o HTML de UM item da lista.
+ * Ela é chamada pela função carregarTarefas().
+ */
+function renderizarTarefa(tarefa) {
+    const itemLista = document.createElement('li');
+    itemLista.classList.add('tarefa-item');
+    itemLista.dataset.id = tarefa.id;
 
-    /*Verifica se o campo de input não está vazio, caso esteja,
-    não adiciona a tarefa*/
-    if(novaTarefa !== ""){
-        adicionarTarefa(novaTarefa);
-        //Limpa o campo input após adicionar a tarefa
-        inputTarefa.value = "";
+    // Formata as datas para o padrão brasileiro (DD/MM/AAAA)
+    const dataCriacaoFormatada = new Date(tarefa.data_criacao).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+    const dataEntregaFormatada = tarefa.data_entrega
+        ? new Date(tarefa.data_entrega).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+        : 'Não definida';
+
+    itemLista.innerHTML = `
+        <div class="tarefa-info">
+            <h3 class="tarefa-titulo">${tarefa.titulo}</h3>
+            <p class="tarefa-descricao">${tarefa.descricao || 'Sem descrição'}</p>
+            <div class="tarefa-meta">
+                <span class="meta-item status-${tarefa.status.toLowerCase().replace(' ', '')}"><strong>Status:</strong> ${tarefa.status}</span>
+                <span class="meta-item prioridade-${tarefa.prioridade.toLowerCase()}"><strong>Prioridade:</strong> ${tarefa.prioridade}</span>
+            </div>
+            <div class="tarefa-datas">
+                <span class="data-item"><strong>Criada em:</strong> ${dataCriacaoFormatada}</span>
+                <span class="data-item"><strong>Entregar até:</strong> ${dataEntregaFormatada}</span>
+            </div>
+        </div>
+        <div class="tarefa-botoes">
+            <button class="botao-editar">Editar</button>
+            <button class="botao-remover">Remover</button>
+        </div>
+    `;
+
+    // Adiciona os eventos aos botões de cada tarefa
+    itemLista.querySelector('.botao-editar').addEventListener('click', () => editarTarefa(tarefa));
+    itemLista.querySelector('.botao-remover').addEventListener('click', () => removerTarefa(tarefa.id));
+
+    return itemLista;
+}
+
+
+/**
+ * PARTE 3: POST - Adiciona uma nova tarefa.
+ * Chamada quando o usuário clica no botão "Adicionar Tarefa".
+ */
+async function adicionarTarefa(event) {
+    event.preventDefault(); // Impede o formulário de recarregar a página
+
+    // Coleta os valores de TODOS os campos do formulário
+    const tarefaPayload = {
+        titulo: inputTitulo.value.trim(),
+        descricao: inputDescricao.value.trim(),
+        status: selectStatus.value,
+        prioridade: selectPrioridade.value,
+        data_entrega: inputDataEntrega.value || null // Envia null se a data estiver vazia
+    };
+
+    if (!tarefaPayload.titulo) {
+        alert('O campo "Título" é obrigatório.');
+        return;
     }
-});
 
-//Iniciar a aplicação com as tarefas já renderizadas
-renderizarTarefas();
+    try {
+        const response = await fetch(urlAPI, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(tarefaPayload)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao tentar adicionar a tarefa.');
+        }
+
+        form.reset(); // Limpa o formulário após o sucesso
+        carregarTarefas(); // Atualiza a lista na tela com a nova tarefa
+
+    } catch (error) {
+        console.error('Falha ao adicionar a tarefa:', error);
+        alert('Ocorreu um erro ao adicionar a tarefa.');
+    }
+}
+
+
+ /* PARTE 4: PUT - Edita uma tarefa existente.
+ É chamada quando o usuário clica no botão "Editar" de um item da lista. */
+
+async function editarTarefa(tarefa) {
+    // 1. Usa prompt() para obter os novos valores, preenchendo com os dados atuais da tarefa.
+    const novoTitulo = prompt("Editar título:", tarefa.titulo);
+    const novaDescricao = prompt("Editar descrição:", tarefa.descricao);
+    const novoStatus = prompt(`Editar status (Pendente, Em andamento, Concluída):`, tarefa.status);
+    const novaPrioridade = prompt(`Editar prioridade (Baixa, Média, Alta):`, tarefa.prioridade);
+    
+    // Para a data, removemos a parte do horário para o prompt funcionar corretamente.
+    const dataAtual = tarefa.data_entrega ? tarefa.data_entrega.split('T')[0] : '';
+    const novaDataEntrega = prompt("Editar data de entrega (formato AAAA-MM-DD):", dataAtual);
+
+    // 2. Validação: Verifica se o usuário não cancelou o primeiro prompt.
+    // Se o novo título for null, significa que o usuário clicou em "Cancelar".
+    if (novoTitulo === null) {
+        return; // Interrompe a edição se o usuário cancelar.
+    }
+
+    // 3. Validação dos campos de Status e Prioridade. 
+    const statusValidos = ["Pendente", "Em andamento", "Concluída"];
+    const prioridadesValidas = ["Baixa", "Média", "Alta"];
+
+    if (!statusValidos.includes(novoStatus)) {
+        alert(`Status inválido! Por favor, use um dos seguintes valores: ${statusValidos.join(', ')}.`);
+        return;
+    }
+
+    if (!prioridadesValidas.includes(novaPrioridade)) {
+        alert(`Prioridade inválida! Por favor, use um dos seguintes valores: ${prioridadesValidas.join(', ')}.`);
+        return;
+    }
+
+    // 4. Monta o objeto (payload) com os novos dados para enviar à API. 
+    const payload = {
+        titulo: novoTitulo.trim(),
+        descricao: novaDescricao.trim(),
+        status: novoStatus,
+        prioridade: novaPrioridade,
+        data_entrega: novaDataEntrega || null // Envia null se a data for deixada em branco.
+    };
+    
+    // 5. Envia a requisição PUT para a API.
+    try {
+        const response = await fetch(`${urlAPI}/${tarefa.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error('Falha ao atualizar a tarefa.');
+        }
+
+        // 6. Atualiza a lista de tarefas na tela para refletir a mudança. 
+        carregarTarefas();
+
+    } catch (error) {
+        console.error("Erro ao editar tarefa:", error);
+        alert('Ocorreu um erro ao tentar editar a tarefa.');
+    }
+}
+
+async function editarTarefa(tarefa) {
+    // A atividade pede um prompt para cada campo. Vamos fazer isso no próximo passo.
+    console.log('Função de editar chamada para a tarefa:', tarefa);
+    alert('A funcionalidade de edição será implementada no próximo passo!');
+}
+
+/**
+ * Função para remover uma tarefa.
+ */
+async function removerTarefa(id) {
+    if (!confirm('Tem certeza de que deseja remover esta tarefa?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${urlAPI}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Falha ao remover a tarefa.');
+        }
+
+        carregarTarefas(); // Atualiza a lista na tela
+    } catch (error) {
+        console.error("Erro ao remover tarefa: ", error);
+        alert('Ocorreu um erro ao remover a tarefa.');
+    }
+}
+
+
+// --- Event Listeners (Ouvintes de Eventos) ---
+
+// Quando o botão de adicionar é clicado, chama a função adicionarTarefa
+botaoAdicionar.addEventListener('click', adicionarTarefa);
+
+// Quando a página termina de carregar, busca e exibe as tarefas iniciais
+document.addEventListener('DOMContentLoaded', carregarTarefas);
