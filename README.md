@@ -55,7 +55,7 @@ Antes de começar, certifique-se de que tem as seguintes ferramentas instaladas:
 1.  **Clone o repositório:**
 
     ```bash
-    git clone https://github.com/seu-usuario/seu-repositorio.git
+    git clone https://github.com/Gateiro/ToDoList
     ```
 
 2.  **Configure o Back-End:**
