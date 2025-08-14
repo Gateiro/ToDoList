@@ -83,7 +83,6 @@ function renderizarTarefa(tarefa) {
     return itemLista;
 }
 
-
 /**
  * PARTE 3: POST - Adiciona uma nova tarefa.
  * Chamada quando o usuário clica no botão "Adicionar Tarefa".
@@ -91,18 +90,28 @@ function renderizarTarefa(tarefa) {
 async function adicionarTarefa(event) {
     event.preventDefault(); // Impede o formulário de recarregar a página
 
-    // Coleta os valores de TODOS os campos do formulário
-    const tarefaPayload = {
-        titulo: inputTitulo.value.trim(),
-        descricao: inputDescricao.value.trim(),
-        status: selectStatus.value,
-        prioridade: selectPrioridade.value,
-        data_entrega: inputDataEntrega.value || null // Envia null se a data estiver vazia
-    };
+    // Coleta os valores dos campos
+    const titulo = inputTitulo.value.trim();
+    const descricao = inputDescricao.value.trim();
+    const status = selectStatus.value;
+    const prioridade = selectPrioridade.value;
+    const data_entrega = inputDataEntrega.value;
 
-    if (!tarefaPayload.titulo) {
+    if (!titulo) {
         alert('O campo "Título" é obrigatório.');
         return;
+    }
+    // Monta o objeto (payload) base
+    const tarefaPayload = {
+        titulo: titulo,
+        descricao: descricao,
+        status: status,
+        prioridade: prioridade
+    };
+
+    // Adiciona a data de entrega ao payload APENAS se ela foi preenchida
+    if (data_entrega) {
+        tarefaPayload.data_entrega = data_entrega;
     }
 
     try {
@@ -113,15 +122,18 @@ async function adicionarTarefa(event) {
         });
 
         if (!response.ok) {
-            throw new Error('Erro ao tentar adicionar a tarefa.');
+            // Para nos dar mais detalhes sobre o erro do servidor
+            const errorData = await response.text();
+            console.error('Erro retornado pelo servidor:', errorData);
+            throw new Error('Erro ao tentar adicionar a tarefa. Verifique o console para mais detalhes.');
         }
 
-        form.reset(); // Limpa o formulário após o sucesso
-        carregarTarefas(); // Atualiza a lista na tela com a nova tarefa
+        form.reset();
+        carregarTarefas();
 
     } catch (error) {
         console.error('Falha ao adicionar a tarefa:', error);
-        alert('Ocorreu um erro ao adicionar a tarefa.');
+        alert(error.message);
     }
 }
 
@@ -188,12 +200,6 @@ async function editarTarefa(tarefa) {
         console.error("Erro ao editar tarefa:", error);
         alert('Ocorreu um erro ao tentar editar a tarefa.');
     }
-}
-
-async function editarTarefa(tarefa) {
-    // A atividade pede um prompt para cada campo. Vamos fazer isso no próximo passo.
-    console.log('Função de editar chamada para a tarefa:', tarefa);
-    alert('A funcionalidade de edição será implementada no próximo passo!');
 }
 
 /**

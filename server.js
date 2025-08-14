@@ -1,105 +1,117 @@
-//Importa o framework Express para facilitar a criação de APIs
+// Importa o framework Express
 const express = require('express');
-
-//Importa o módulo cors para permitir requisições de difierentes origens
+// Importa o módulo cors para permitir requisições de diferentes origens
 const cors = require('cors');
+// Importa o driver do MySQL
+const mysql = require('mysql2');
 
-
-//Cria uma instância de aplicação Express
+// Cria uma instância da aplicação Express
 const app = express();
-
-//Define a porta em que o servidor irá escutar
+// Define a porta em que o servidor irá escutar
 const PORT = 3000;
 
-//Aplica o middleware cors para permitir requisições de diferentes origens
+// Aplica middlewares
 app.use(cors());
-
-/*Aplica o middleware express.json() que permite receber e interpretar
-JSON no corpo das requisições (red.body)*/
 app.use(express.json());
 
-//Array em memória para simular um banco de dados
-let tarefas = [];
+// --- LIGAÇÃO COM O BANCO DE DADOS MYSQL ---
+// Gerir as ligações de forma eficiente
+const connection = mysql.createPool({
+    host: 'localhost',      //
+    user: 'root',           // 
+    password: '!Semgas@123',  // 
+    database: 'taskmanager' // 
+}).promise(); // 
 
-/*-------------------ROTAS DA API--------------------- */
 
-//Rota GET - Retorna a lista com todas as tarefas
-app.get('/tarefas', (req, res) => {
-  res.json(tarefas); //Responde com a lista de tarefas em formato JSON
+/*------------------- ROTAS DA API COM SQL --------------------- */
+
+// Rota GET - Retorna a lista com todas as tarefas
+app.get('/tarefas', async (req, res) => {
+    try {
+        const [rows] = await connection.query('SELECT * FROM tarefas');
+        res.json(rows);
+    } catch (error) {
+        console.error('Erro ao buscar tarefas:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
 });
 
-//Rota POST - Adiciona uma nova tarefa à lista
-app.post('/tarefas', (req, res) => {
-  //Extrai o campo 'texto' enviado no corpo da requisição
-  const { texto } = req.body; //Desestrutura o corpo da requisição
+// Rota POST - Adiciona uma nova tarefa completa
+app.post('/tarefas', async (req, res) => {
+    const { titulo, descricao, status, prioridade, data_entrega } = req.body;
 
-  //Validação simples para verificar se o campo 'texto' foi enviado
-  if(!texto){
-    //Se não foi enviado, responde com erro 400(Bad Request)
-    return res.status(400).json({ error: 'Texto da tarefa é obrigatório' });
-  }
+    if (!titulo || !status || !prioridade) {
+        return res.status(400).json({ error: 'Os campos titulo, status e prioridade são obrigatórios.' });
+    }
 
-  //Cria um novo objeto tarefa com id único baseado no timestamp atual
-  const novaTarefa = { id: Date.now(), texto}; //Cria um novo objeto tarefa
-  
-  //Adiciona a nova tarefa ao array de tarefas
-  tarefas.push(novaTarefa);
-  //Responde com a nova tarefa criada e status 201 (Created)
-  res.status(201).json(novaTarefa);
+    try {
+        const query = `
+            INSERT INTO tarefas (titulo, descricao, status, prioridade, data_entrega) 
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const [result] = await connection.query(query, [titulo, descricao, status, prioridade, data_entrega || null]);
+        
+        // Devolve o objeto completo que foi inserido
+        const novaTarefa = {
+            id: result.insertId, // Pega o ID que o banco de dados gerou
+            titulo,
+            descricao,
+            status,
+            prioridade,
+            data_entrega
+        };
+        res.status(201).json(novaTarefa);
+
+    } catch (error) {
+        console.error('Erro ao criar tarefa:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
 });
 
-//Rota PUT - Atualiza uma tarefa existente
-app.put('/tarefas/:id', (req, res) => {
-    //Obtem o ID da tarefa a ser atualizada a partir dos parametros da URL
-    const id = parseInt(req.params.id);
-    //Extrai o novo texto enviado no corpo da requisição
-    const { texto } = req.body;
+// Rota PUT - Atualiza uma tarefa existente
+app.put('/tarefas/:id', async (req, res) => {
+    const { id } = req.params;
+    const { titulo, descricao, status, prioridade, data_entrega } = req.body;
 
-    //Encontra o índice da tarefa a ser atualizada no array de tarefas
-    const index = tarefas.find(tarefa => tarefa.id == id);
+    try {
+        const query = `
+            UPDATE tarefas 
+            SET titulo = ?, descricao = ?, status = ?, prioridade = ?, data_entrega = ?
+            WHERE id = ?
+        `;
+        const [result] = await connection.query(query, [titulo, descricao, status, prioridade, data_entrega || null, id]);
 
-    //Validação: verifica se a tarefa existe
-    if(!index){
-        //Se não existe, responde com erro 404 (Not Found)
-        return res.status(404).json({ error: 'Tarefa não encontrada' });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Tarefa não encontrada.' });
+        }
+        res.json({ message: 'Tarefa atualizada com sucesso.' });
+
+    } catch (error) {
+        console.error('Erro ao editar tarefa:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
     }
-
-    //Se um novo texto foi enviado, atualiza o campo 'texto' da tarefa
-    if(texto){
-        index.texto = texto;
-    }
-
-    //Se não foi enviado, mantém o texto atual
-    else{
-        index.texto = index.texto;
-    }
-
-    //Responde com a tarefa atualizada
-    res.json(index);
 });
 
-//Rota DELETE - Remove uma tarefa existente
-app.delete('/tarefas/:id', (req, res) => {
-    //Obtem o ID da tarefa a ser removida a partir dos parametros da URL
-    const id = parseInt(req.params.id);
+// Rota DELETE - Remove uma tarefa existente
+app.delete('/tarefas/:id', async (req, res) => {
+    const { id } = req.params;
 
-    //Encontra o índice da tarefa a ser removida no array de tarefas
-    const index = tarefas.find(tarefa => tarefa.id == id);
+    try {
+        const [result] = await connection.query('DELETE FROM tarefas WHERE id = ?', [id]);
 
-    //Validação: verifica se a tarefa existe
-    if(!index){
-        //Se não existe, responde com erro 404 (Not Found)
-        return res.status(404).json({ error: 'Tarefa não encontrada' });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Tarefa não encontrada.' });
+        }
+        res.sendStatus(204); // Sucesso, sem conteúdo para devolver
+
+    } catch (error) {
+        console.error('Erro ao remover tarefa:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
     }
-
-    //Remove a tarefa do array de tarefas
-    tarefas = tarefas.filter(tarefa => tarefa.id != id);
-
-    //Responde com status 204 (No Content) indicando que a remoção foi bem-sucedida
-    res.sendStatus(204);
 });
 
-//Inicia o servidor na porta definida e exibe uma mensagem no console
+// Inicia o servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor CONECTADO AO BANCO DE DADOS rodando na porta ${PORT}`);
 });

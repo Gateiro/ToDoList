@@ -1,61 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
-    <link rel="stylesheet" href="css/style.css"> <!-- Link para o arquivo CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Link para o Font Awesome -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
 </head>
+
 <body>
-    <div class="form-container">
-    <h2>Adicionar Nova Tarefa</h2>
+    <form class="form-container">
+        <h2>Adicionar Nova Tarefa</h2>
 
-    <div class="form-group">
-        <label for="campo-titulo">Título:</label>
-        <input type="text" id="campo-titulo" class="campo-titulo" placeholder="O que precisa ser feito?" required>
-    </div>
-
-    <div class="form-group">
-        <label for="campo-descricao">Descrição:</label>
-        <textarea id="campo-descricao" class="campo-descricao" placeholder="Detalhe sua tarefa..."></textarea>
-    </div>
-
-    <div class="form-row">
         <div class="form-group">
-            <label for="campo-status">Status:</label>
-            <select id="campo-status" class="campo-status" required>
-                <option value="Pendente" selected>Pendente</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Concluída">Concluída</option>
-            </select>
+            <label for="campo-titulo">Título:</label>
+            <input type="text" id="campo-titulo" class="campo-titulo" placeholder="O que precisa ser feito?" required>
         </div>
 
         <div class="form-group">
-            <label for="campo-prioridade">Prioridade:</label>
-            <select id="campo-prioridade" class="campo-prioridade" required>
-                <option value="Baixa">Baixa</option>
-                <option value="Média" selected>Média</option>
-                <option value="Alta">Alta</option>
-            </select>
+            <label for="campo-descricao">Descrição:</label>
+            <textarea id="campo-descricao" class="campo-descricao" placeholder="Detalhe sua tarefa..."></textarea>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label for="campo-data-entrega">Data de Entrega:</label>
-        <input type="date" id="campo-data-entrega" class="campo-data-entrega">
-    </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="campo-status">Status:</label>
+                <select id="campo-status" class="campo-status" required>
+                    <option value="Pendente" selected>Pendente</option>
+                    <option value="Em andamento">Em andamento</option>
+                    <option value="Concluída">Concluída</option>
+                </select>
+            </div>
 
-    <button id="botao-adicionar" class="botao-adicionar">Adicionar Tarefa</button> <!--Botão para adicionar tarefa-->
-</div>
- 
-    <ul class="lista-tarefas">
+            <div class="form-group">
+                <label for="campo-prioridade">Prioridade:</label>
+                <select id="campo-prioridade" class="campo-prioridade" required>
+                    <option value="Baixa">Baixa</option>
+                    <option value="Média" selected>Média</option>
+                    <option value="Alta">Alta</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="campo-data-entrega">Data de Entrega:</label>
+            <input type="date" id="campo-data-entrega" class="campo-data-entrega">
+        </div>
+
+        <button id="botao-adicionar" class="botao-adicionar">Adicionar Tarefa</button>
+        <!--Botão para adicionar tarefa-->
+    </form>
 
     <ul id="lista-tarefas" class="lista-tarefas">
-    <!---->
-    <!--script src="js/app.js"></script>Link para o arquivo JavaScript -->
-    <script src="/scripts/script-integracaoAPI.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Link para o jQuery -->
- 
+        <!---->
+        <!--script src="js/app.js"></script>Link para o arquivo JavaScript -->
+        <script src="/scripts/script-integracaoAPI.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Link para o jQuery -->
+
 </body>
+
 </html>
