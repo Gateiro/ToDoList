@@ -19,8 +19,8 @@ app.use(express.json());
 const connection = mysql.createPool({
     host: 'localhost',      //
     user: 'root',           // 
-    password: '!Semgas@123',  // 
-    database: 'taskmanager' // 
+    password: 'PASSWORD',  // 
+    database: 'DB_NAME' // 
 }).promise(); // 
 
 
